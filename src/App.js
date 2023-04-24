@@ -5,21 +5,26 @@ import Home from "./Home";
 import SnackOrBoozeApi from "./Api";
 import NavBar from "./NavBar";
 import { Route, Switch } from "react-router-dom";
-import Menu from "./FoodMenu";
-import Snack from "./FoodItem";
+import Menu from "./Menu";
+import Item from "./Item";
+import AddForm from "./AddForm";
+import FormContext from "./MenuContext";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [snacks, setSnacks] = useState([]);
+  const [drinks, setDrinks] = useState([]);
 
   useEffect(() => {
-    async function getSnacks() {
+    async function getItems() {
       let snacks = await SnackOrBoozeApi.getSnacks();
+      let drinks = await SnackOrBoozeApi.getDrinks();
       setSnacks(snacks);
+      setDrinks(drinks);
       setIsLoading(false);
     }
-    getSnacks();
-  }, []);
+    getItems();
+  }, [setSnacks, setDrinks]);
 
   if (isLoading) {
     return <p>Loading &hellip;</p>;
@@ -30,20 +35,33 @@ function App() {
       <BrowserRouter>
         <NavBar />
         <main>
-          <Switch>
-            <Route exact path="/">
-              <Home snacks={snacks} />
-            </Route>
-            <Route exact path="/snacks">
-              <Menu snacks={snacks} title="Snacks" />
-            </Route>
-            <Route path="/snacks/:id">
-              <Snack items={snacks} cantFind="/snacks" />
-            </Route>
-            <Route>
-              <p>Hmmm. I can't seem to find what you want.</p>
-            </Route>
-          </Switch>
+          <FormContext.Provider
+            value={{ snacks, setSnacks, drinks, setDrinks }}
+          >
+            <Switch>
+              <Route exact path="/">
+                <Home items={snacks} />
+              </Route>
+              <Route path="/snacks/:id">
+                <Item cantFind="/snacks" />
+              </Route>
+              <Route exact path="/snacks">
+                <Menu title="Snacks" />
+              </Route>
+              <Route path="/drinks/:id">
+                <Item cantFind="/drinks" />
+              </Route>
+              <Route path="/drinks">
+                <Menu title="Drinks" />
+              </Route>
+              <Route path="/add">
+                <AddForm title="Add" />
+              </Route>
+              <Route>
+                <p>Hmmm. I can't seem to find what you want.</p>
+              </Route>
+            </Switch>
+          </FormContext.Provider>
         </main>
       </BrowserRouter>
     </div>

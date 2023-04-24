@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardBody, CardTitle } from "reactstrap";
+import "./Home.css";
 
 function Home() {
   return (
@@ -7,9 +8,7 @@ function Home() {
       <Card>
         <CardBody className="text-center">
           <CardTitle>
-            <h3 className="font-weight-bold">
-              Welcome to Silicon Valley's premier dive cafe!
-            </h3>
+            <b className="welcome">Welcome to Silicon Valley's premier dive cafe!</b>
           </CardTitle>
         </CardBody>
       </Card>
